@@ -9,8 +9,12 @@ module VimeoForEverybody
 
     module InstanceMethods
 
-      def vimeo(klass_name=:base, options={})
+      #instanciate and store a Vimeo::Advanced::KlassName API object (Base per default)
+      def vimeo(*params)
+        options = params.extract_options!.symbolize_keys!
+        klass_name = params.first || :base
         @vimeo ||= {}
+        @vimeo[klass_name.to_sym] = nil if options.delete(:force)
         @vimeo[klass_name.to_sym] ||= "Vimeo::Advanced::#{klass_name.to_s.classify}".constantize.new(vimeo_api_key, vimeo_api_secret, :token => options[:token] || vimeo_token, :secret => options[:secret] || vimeo_secret)
       end
 
@@ -30,6 +34,7 @@ module VimeoForEverybody
           access_token = vimeo.get_access_token(oauth_token, oauth_secret, oauth_verifier)
           self.vimeo_token = access_token.token
           self.vimeo_secret = access_token.secret
+          self.vimeo_id = vimeo(:force => true).check_access_token["oauth"]["user"]["id"]
           save
         end
       end
