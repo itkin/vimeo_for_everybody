@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class VimeoForEverybodyTest < ActiveSupport::TestCase
+class HasVimeoAccountTest < ActiveSupport::TestCase
 
   def test_init
     owner = Owner.new

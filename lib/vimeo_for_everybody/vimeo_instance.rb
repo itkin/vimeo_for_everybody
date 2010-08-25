@@ -6,6 +6,7 @@ module VimeoForEverybody
       class_inheritable_accessor :vimeo_account_belongs_to
       self.vimeo_account_belongs_to = options.delete(:account_belongs_to)
       include InstanceMethods
+      extend ClassMethods
     end
 
     module InstanceMethods
@@ -19,6 +20,12 @@ module VimeoForEverybody
         HTTParty.get(oembed)['html']
       end
     end
+
+    module ClassMethods
+      def init_from_vimeo(vimeo_id)
+        instance = find_or_initialize_by_vimeo_id(vimeo_id)
+      end
+    end    
   end
 
 end
