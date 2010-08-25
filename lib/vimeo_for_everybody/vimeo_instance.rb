@@ -4,7 +4,7 @@ module VimeoForEverybody
 
     def has_vimeo_instance(options={})
       class_inheritable_accessor :vimeo_account_belongs_to
-      self.vimeo_account_belongs_to = options.delete(:vimeo_account_belongs_to).to_sym
+      self.vimeo_account_belongs_to = options.delete(:account_belongs_to)
       include InstanceMethods
     end
 
