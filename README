@@ -1,0 +1,73 @@
+== VIMEO FOR EVERYBODY ==
+
+This plugin is created to integrate easily the vimeo api in a RoR 3 project
+
+== USAGE ==
+
+1- Generate the model columns
+
+rails g vimeo_acount User
+
+    add_column :users, :vimeo_api_key, :text
+    add_column :users, :vimeo_api_secret, :text
+    add_column :users, :vimeo_token, :text
+    add_column :users, :vimeo_secret, :text
+
+rails g vimeo_instance Video
+
+    add_column :videos, :description, :text
+    add_column :videos, :embed, :text
+    add_column :videos, :video_id, :string
+
+
+2- Extend the AR models with the plugin methods
+
+class User
+  has_vimeo_account
+end
+
+class Video
+  has_vimeo_instance 
+end
+
+3- Access the vimeo API as follow
+
+* In your models
+
+User
+  - check_vimeo_access # will return the vimeo token or false if an error occurs
+  - set_vimeo_access(oauth_token, oauth_secret, oauth_verifier) #save your model with the vimeo token and secret
+  - remote_videos #access all the video an user has on vimeo
+  - vimeo(:class_name=:base) #get the vimeo advanced API instance passed in parameter
+
+Video
+  - embed(options) # get the vimeo html code to embed in your views
+  - upload(source_path, user) upload a video on one of your user vimeo account
+
+* In your admin video controller, your first need to ask your user to register
+your application and authorize it to manage its account. You can handle it this way 
+
+VideosController
+
+  before_filter :get_user, :authorize
+
+  def get_user
+    User.find(params[:user_id])
+  end
+
+  def authorize
+    if params[:oauth_token].blank? or params[:oauth_verifier].blank?
+      request_token = @user.vimeo(:advanced).get_request_token
+      session[:oauth_secret] = request_token.secret
+      redirect_to @user.vimeo(:advanced).authorize_url
+    else
+      @user.set_vimeo_access(params[:oauth_token], session[:oauth_secret], params[:oauth_verifier])
+      redirect_to videos_path
+    end
+  end
+
+end
+
+* In your view
+
+<%= raw @video.embed(options) %>

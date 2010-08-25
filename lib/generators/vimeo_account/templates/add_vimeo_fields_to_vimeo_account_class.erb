@@ -1,0 +1,15 @@
+class AddVimeoFieldsTo<%=class_name.pluralize%> < ActiveRecord::Migration
+  def self.up
+    add_column :<%=plural_name%>, :vimeo_api_key, :text
+    add_column :<%=plural_name%>, :vimeo_api_secret, :text
+    add_column :<%=plural_name%>, :vimeo_token, :text
+    add_column :<%=plural_name%>, :vimeo_secret, :text
+  end
+
+  def self.down
+    remove_column :<%=plural_name%>, :vimeo_api_key
+    remove_column :<%=plural_name%>, :vimeo_api_secret
+    remove_column :<%=plural_name%>, :vimeo_token
+    remove_column :<%=plural_name%>, :vimeo_secret
+  end
+end
