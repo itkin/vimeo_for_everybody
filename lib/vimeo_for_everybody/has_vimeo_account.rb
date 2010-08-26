@@ -43,7 +43,7 @@ module VimeoForEverybody
           if args.blank?
             send "#{association_id.to_s.singularize}_ids_without_remote"
           else
-            send(association_id, *args).collect{|video| video['id']}
+            send(association_id, *args).collect{|vimeo_instance| vimeo_instance['id']}
           end
         end
 
