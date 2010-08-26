@@ -119,6 +119,6 @@ module VimeoForEverybody
 
 end
 
-ActiveSupport.on_load(:after_initialize) do
+ActiveSupport.on_load(:active_record) do
   ActiveRecord::Base.extend VimeoForEverybody::VimeoAccount
 end  

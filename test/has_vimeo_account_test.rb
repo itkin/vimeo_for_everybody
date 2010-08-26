@@ -11,6 +11,7 @@ class HasVimeoAccountTest < ActiveSupport::TestCase
     assert_equal @owner.vimeo, @owner.vimeo
     assert_not_equal @owner.vimeo, @owner.vimeo(:force => true)
   end
+
   def test_synchronize_remote_and_local_collections
     assert_raise OAuth::Unauthorized do
       @owner.videos.synchronize!
