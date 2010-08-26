@@ -10,6 +10,7 @@ module VimeoForEverybody
       self.vimeo[:account] = options[:account] or raise "need an AR model which hold the Viemo account"
       self.vimeo[:players] = {:default =>{}}.update(options[:players] || {})
 
+      serialize :vimeo_info
 
       include InstanceMethods
       extend ClassMethods
@@ -40,7 +41,6 @@ module VimeoForEverybody
       #api :     (optional) Enable the Javascript API for Moogaloop. Defaults to false.
       #wmode :   (optional) Add the "wmode" parameter. Can be either transparent or opaque.
       #iframe :  (optional) Use our new embed code. Defaults to true. New!
-
 
       def vimeo_player(*args)
         options = args.extract_options!.symbolize_keys!
@@ -75,25 +75,21 @@ module VimeoForEverybody
       #height : Standard definition height of the video
       #tags : Comma separated list of tags
 
-      def vimeo_info
-        self.class.vimeo_info(vimeo_id)
+      def vimeo_info(remote = nil )
+        if vimeo_id
+          read_attribute(:vimeo_info).blank? or remote.to_s == 'remote' ? Vimeo::Simple::Video.info(vimeo_id).parsed_response.first : read_attribute(:vimeo_info) 
+        end
+      end
+      def set_vimeo_info
+        self.vimeo_info = vimeo_info(:remote)
       end
 
     end
 
     module ClassMethods
-
-      def init_from_vimeo(vimeo_id)
-        instance = find_or_initialize_by_vimeo_id(vimeo_id)
-        info = vimeo_info(vimeo_id)
-        instance.title = info['title']
-        instance.description = info['description']
+      def init_from_vimeo
+        self.vimeo_info = vimeo_info(vimeo_id)
       end
-
-      def vimeo_info(vimeo_id=nil)
-        Vimeo::Simple::Video.info(vimeo_id).parsed_response.first if vimeo_id
-      end
-
     end
   end
 

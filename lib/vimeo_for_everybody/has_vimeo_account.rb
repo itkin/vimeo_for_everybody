@@ -43,7 +43,7 @@ module VimeoForEverybody
           if args.blank?
             send "#{association_id.to_s.singularize}_ids_without_remote"
           else
-            send(association_id, *args).collect{|vimeo_instance| vimeo_instance['id']}
+            send(association_id, *args).collect { |vimeo_instance| vimeo_instance['id'] }
           end
         end
 
@@ -59,10 +59,7 @@ module VimeoForEverybody
       def synchronize!
         destroy_local_instances_without_remote_ones do
           proxy_owner.send("#{proxy_reflection.name.to_s.singularize}_ids", true, :remote).collect do |vimeo_id|
-            local_instance = proxy_reflection.klass.init_from_vimeo(vimeo_id)
-            local_instance.user_id = id
-            local_instance.save
-            local_instance
+            find_or_initialize_by_vimeo_id(vimeo_id).init_from_vimeo
           end
         end
         proxy_owner.send proxy_reflection.name, true
