@@ -1,6 +1,10 @@
 == VIMEO FOR EVERYBODY ==
 
-This plugin is created to integrate easily the vimeo api in a RoR 3 project
+!!! STILL AT WORK !!!
+
+I'm developping this plugin in order to handle Vimeo API easily from AR models, in a RoR 3 project.
+
+All you need is to have installed the vimeo gem and its dependencies
 
 == USAGE ==
 
@@ -12,22 +16,22 @@ rails g vimeo_acount User
     add_column :users, :vimeo_api_secret, :text
     add_column :users, :vimeo_token, :text
     add_column :users, :vimeo_secret, :text
+    add_column :videos, :vimeo_id, :string
 
 rails g vimeo_instance Video
 
     add_column :videos, :description, :text
     add_column :videos, :embed, :text
-    add_column :videos, :video_id, :string
-
+    add_column :videos, :vimeo_id, :string
 
 2- Extend the AR models with the plugin methods
 
 class User
-  has_vimeo_account
+  has_many :videos, :hosted_on => :vimeo
 end
 
 class Video
-  has_vimeo_instance 
+  host_on_vimeo
 end
 
 3- Access the vimeo API as follow
@@ -37,7 +41,7 @@ end
 User
   - check_vimeo_access # will return the vimeo token or false if an error occurs
   - set_vimeo_access(oauth_token, oauth_secret, oauth_verifier) #save your model with the vimeo token and secret
-  - remote_videos #access all the video an user has on vimeo
+  - videos(:remote) #access all the video info an user instance has hosted on vimeo
   - vimeo(:class_name=:base) #get the vimeo advanced API instance passed in parameter
 
 Video
@@ -57,9 +61,8 @@ VideosController
 
   def authorize
     if params[:oauth_token].blank? or params[:oauth_verifier].blank?
-      request_token = @user.vimeo(:advanced).get_request_token
-      session[:oauth_secret] = request_token.secret
-      redirect_to @user.vimeo(:advanced).authorize_url
+      session[:oauth_secret] = @user.vimeo.get_request_token.secret
+      redirect_to @user.vimeo.authorize_url
     else
       @user.set_vimeo_access(params[:oauth_token], session[:oauth_secret], params[:oauth_verifier])
       redirect_to videos_path

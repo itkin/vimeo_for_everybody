@@ -1,9 +1,8 @@
 class Owner < ActiveRecord::Base
-  has_vimeo_account
-  has_many :videos
+  has_many :videos, :hosted_on => :vimeo
 end
 
 class Video < ActiveRecord::Base
-  has_vimeo_instance :vimeo_account_belongs_to => :owner
+  hosted_on_vimeo :account => :owner, :players => {:default => { :width => 200, :height => 200 } } 
   belongs_to :owner
 end

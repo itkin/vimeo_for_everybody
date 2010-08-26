@@ -5,6 +5,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.text :vimeo_api_secret
     t.text :vimeo_token
     t.text :vimeo_secret
+    t.text :vimeo_id
 
   end
   create_table :videos, :force => true do |t|
@@ -13,7 +14,7 @@ ActiveRecord::Schema.define(:version => 0) do
   end
   add_column :videos, :description, :text
   add_column :videos, :embed, :text
-  add_column :videos, :video_id, :string
+  add_column :videos, :vimeo_id, :string
 
 
 end
