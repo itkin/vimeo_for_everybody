@@ -86,11 +86,6 @@ module VimeoForEverybody
 
     end
 
-    module ClassMethods
-      def init_from_vimeo
-        self.vimeo_info = vimeo_info(vimeo_id)
-      end
-    end
   end
 
 end
