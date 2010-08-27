@@ -1,5 +1,6 @@
 module VimeoForEverybody
 
+
   module VimeoInstance
     #
     # options = { :account => :user, :players => { :large => {:width=> 200, :height => 100, ...}} 
@@ -77,9 +78,10 @@ module VimeoForEverybody
 
       def vimeo_info(remote = nil )
         if vimeo_id
-          read_attribute(:vimeo_info).blank? or remote.to_s == 'remote' ? Vimeo::Simple::Video.info(vimeo_id).parsed_response.first : read_attribute(:vimeo_info) 
+          read_attribute(:vimeo_info).blank? or remote.to_s == 'remote' ? Vimeo::Simple::Video.info(vimeo_id).parsed_response.first : read_attribute(:vimeo_info)
         end
       end
+      
       def set_vimeo_info
         self.vimeo_info = vimeo_info(:remote)
       end

@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'test/unit'
 require 'active_support'
+require 'fakeweb'
 
 
 require 'ruby-debug'
@@ -45,5 +46,12 @@ ActiveRecord::Base.establish_connection(config[db_adapter])
 load(File.dirname(__FILE__) + "/schema.rb")
 load(File.dirname(__FILE__) + "/model.rb")
 
+def fixture_file(file_name)
+  File.read( File.expand_path(File.dirname(__FILE__)) + '/responses/' + file_name + '.json' ) 
+end
+def fake_request(method, url, filename, &block)
+  FakeWeb.register_uri(method, url.is_a?(String) ? Regexp.new(url) : url, :body => fixture_file(filename), :content_type => 'application/json' )
+  yield
+end
 
 
