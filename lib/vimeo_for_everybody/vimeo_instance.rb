@@ -11,10 +11,10 @@ module VimeoForEverybody
       self.vimeo[:account] = options[:account] or raise "need an AR model which hold the Viemo account"
       self.vimeo[:players] = {:default =>{}}.update(options[:players] || {})
 
-      serialize :vimeo_info
+      serialize :vimeo_info_local
 
       include InstanceMethods
-      extend ClassMethods
+
     end
 
     module InstanceMethods
@@ -76,20 +76,19 @@ module VimeoForEverybody
       #height : Standard definition height of the video
       #tags : Comma separated list of tags
 
-      def vimeo_info(remote = nil )
-        if vimeo_id
-          read_attribute(:vimeo_info).blank? or remote.to_s == 'remote' ? Vimeo::Simple::Video.info(vimeo_id).parsed_response.first : read_attribute(:vimeo_info)
-        end
+      def vimeo_info(remote=nil)
+        (vimeo_info_local.nil? or remote.to_s == 'remote') ? Vimeo::Simple::Video.info(vimeo_id).parsed_response.first : vimeo_info_local
       end
-      
+
       def set_vimeo_info
-        self.vimeo_info = vimeo_info(:remote)
+        self.vimeo_info_local = vimeo_info(:remote)
       end
 
     end
-
   end
 
 end
 
-ActiveRecord::Base.extend VimeoForEverybody::VimeoInstance
+ActiveSupport.on_load(:active_record) do
+  ActiveRecord::Base.extend VimeoForEverybody::VimeoInstance
+end

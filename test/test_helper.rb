@@ -1,8 +1,9 @@
 require 'rubygems'
-require 'test/unit'
-require 'active_support'
-require 'fakeweb'
 
+
+
+
+ENV['RAILS_ENV'] = 'test'
 
 require 'ruby-debug'
 Debugger.start
@@ -12,7 +13,11 @@ if Debugger.respond_to?(:settings)
   Debugger.settings[:autolist] = 1
 end
 
-ENV['RAILS_ENV'] = 'test'
+require 'test/unit'
+require 'active_support'
+require 'fakeweb'
+
+
 ENV['RAILS_ROOT'] ||= File.dirname(__FILE__) + '/../../../..'
 require File.expand_path(File.join(ENV['RAILS_ROOT'], 'config/environment.rb'))  
 
@@ -41,17 +46,23 @@ if db_adapter.nil?
   raise "No DB Adapter selected. Pass the DB= option to pick one, or install Sqlite or Sqlite3."
 end
 
+#FakeWeb.allow_net_connect = false
+
 require File.dirname(__FILE__) + '/../init'
 ActiveRecord::Base.establish_connection(config[db_adapter])
-load(File.dirname(__FILE__) + "/schema.rb")
+#load(File.dirname(__FILE__) + "/schema.rb")
 load(File.dirname(__FILE__) + "/model.rb")
 
 def fixture_file(file_name)
   File.read( File.expand_path(File.dirname(__FILE__)) + '/responses/' + file_name + '.json' ) 
 end
-def fake_request(method, url, filename, &block)
-  FakeWeb.register_uri(method, url.is_a?(String) ? Regexp.new(url) : url, :body => fixture_file(filename), :content_type => 'application/json' )
-  yield
+
+def register_uri(method, uri, filename)
+  FakeWeb.register_uri(method, uri, :body => fixture_file(filename), :content_type => 'application/json')
+end
+
+def unregister_uri
+  FakeWeb.clean_registry
 end
 
 

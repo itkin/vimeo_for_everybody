@@ -3,21 +3,23 @@ require 'test_helper'
 class VimeoInstanceTest < ActiveSupport::TestCase
 
   def setup
-    @video = Video.new(:vimeo_id => 12)
-    @video.vimeo_info = {:description => 'io'}
+    @movie = Movie.new(:vimeo_id => 12)
+    @movie.vimeo_info_local = {:description => 'io'}
   end
+  def teardown
+    unregister_uri
+  end
+
   def test_vimeo_info
-    assert_equal({:description => 'io'}, @video.vimeo_info)
-    fake_request :get, 'http://vimeo', 'video_info' do
-      assert_equal "my home (minn heima)", @video.vimeo_info(:remote)["title"]
-    end
+    assert_equal({:description => 'io'}, @movie.vimeo_info)
+    register_uri :get, /vimeo/, 'video_info'
+    assert_equal "test", @movie.vimeo_info(:remote)["title"]
   end
 
   def test_set_vimeo_info
-    fake_request :get, 'http://vimeo', 'video_info' do
-      assert @video.set_vimeo_info
-      assert_equal "my home (minn heima)", @video.vimeo_info["title"]
-    end
+    register_uri :get, /vimeo/, 'video_info'
+    assert @movie.set_vimeo_info
+    assert_equal "test", @movie.vimeo_info["title"]
   end
 
 end

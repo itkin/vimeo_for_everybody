@@ -8,12 +8,12 @@ ActiveRecord::Schema.define(:version => 0) do
     t.text :vimeo_id
 
   end
-  create_table :videos, :force => true do |t|
+  create_table :movies, :force => true do |t|
     t.string :name
     t.integer :owner_id
   end
-  add_column :videos, :vimeo_info, :blob
-  add_column :videos, :vimeo_id, :string
+  add_column :movies, :vimeo_info_local, :blob
+  add_column :movies, :vimeo_id, :string
 
 
 end
