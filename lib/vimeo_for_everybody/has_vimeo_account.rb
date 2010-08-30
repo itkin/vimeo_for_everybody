@@ -26,7 +26,7 @@ module VimeoForEverybody
           options = args.extract_options!.symbolize_keys!
           if args.last.to_s == 'remote'
             @vimeo_instances = nil if args.first == true
-            @vimeo_instances ||= vimeo(:video).get_all(vimeo_id, options={})["videos"]["video"]
+            @vimeo_instances ||= vimeo(:video).get_uploaded(vimeo_id)["videos"]["video"]
           else
             send "#{association_id}_without_remote", *args
           end

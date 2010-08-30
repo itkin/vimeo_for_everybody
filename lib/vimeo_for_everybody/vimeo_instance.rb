@@ -34,7 +34,7 @@ module VimeoForEverybody
           raise Exception, "advanced API impossible to reach because lack of vimeo account instance"
         end  
       end
-      
+
       def upload(file_path)
         upload_api = vimeo_api(:upload)
 
@@ -107,9 +107,24 @@ module VimeoForEverybody
       #tags : Comma separated list of tags
 
       def vimeo_info(remote=nil)
-        (vimeo_info_local.nil? or remote.to_s == 'remote') ? Vimeo::Simple::Video.info(vimeo_id).parsed_response.first : vimeo_info_local
+        (vimeo_info_local.nil? or remote.to_s == 'remote') ? vimeo_api(:video).get_info(vimeo_id)["video"].first : vimeo_info_local
       end
 
+      #format = small, medium, large
+      def vimeo_thumbnail(format='small')
+        thumbnail_id = case format.to_s
+          when 'small' then 0
+          when 'medium' then 1
+          when 'large' then 2
+          else 0
+        end
+        vimeo_info["thumbnails"]["thumbnail"][thumbnail_id]
+      end
+      
+      def vimeo_thumbnail_url(format='small')
+        vimeo_thumbnail(format='small')["_content"]
+      end
+      
       def set_vimeo_info(attributes={})
         unless attributes.blank?
           vimeo_api(:video).set_title(attributes[:title],vimeo_id) if attributes[:title]

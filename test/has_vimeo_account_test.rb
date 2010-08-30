@@ -17,10 +17,13 @@ class HasVimeoAccountTest < ActiveSupport::TestCase
     assert_not_equal @owner.vimeo, @owner.vimeo(:force => true)
   end
 
+  #fakeweb can't process request bodies,
+  #so we aren't able to make any difference between Vimeo::Advanced::Video.get_uploaded and Vimeo::Advanced::Video.get_info
   def test_synchronize_remote_and_local_collections
     @owner.save
+
     register_uri :post, /oauth_nonce/, 'videos'
-    register_uri  :get, /video/, 'video_info'
+    register_uri  :post, /vimeo/, 'video_advanced_info'
 
     assert @owner.movies.synchronize!
     assert_equal 1, @owner.movies.size
