@@ -36,6 +36,7 @@ module VimeoForEverybody
       end
 
       def upload(file_path)
+
         upload_api = vimeo_api(:upload)
 
         #check quota
@@ -48,13 +49,14 @@ module VimeoForEverybody
         ticket = upload_api.get_ticket["ticket"]
 
         #upload the file
+
         upload_api.upload(ticket["endpoint"], file_path, ticket["id"])
 
         # complete the upload
         rsp = upload_api.complete(ticket["id"], File.basename(file_path))
-
+        
         #store the video_id locally
-        update_attribute(:video_id, rsp["ticket"]["video_id"])
+        update_attribute(:vimeo_id, rsp["ticket"]["video_id"])
       end
 
       #url :     The Vimeo URL for a video.

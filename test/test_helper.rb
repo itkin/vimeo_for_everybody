@@ -51,12 +51,22 @@ ActiveRecord::Base.establish_connection(config[db_adapter])
 #load(File.dirname(__FILE__) + "/schema.rb")
 load(File.dirname(__FILE__) + "/model.rb")
 
-def fixture_file(file_name)
-  File.read( File.expand_path(File.dirname(__FILE__)) + '/responses/' + file_name + '.json' ) 
+def fixture_path
+  File.expand_path(File.dirname(__FILE__)) + '/fixtures/'  
 end
 
-def register_uri(method, uri, filename)
-  FakeWeb.register_uri(method, uri, :body => fixture_file(filename), :content_type => 'application/json')
+def fake_responses(*file_names)
+  file_names.flatten.collect do |file_name|
+    if file_name.is_a? String
+      {:body => File.read( fixture_path + file_name + '.json' ), :content_type => 'application/json'}
+    else
+      file_name
+    end
+  end
+end
+
+def register_uri(method, uri, *file_names)
+  FakeWeb.register_uri(method, uri, fake_responses(*file_names))
 end
 
 def unregister_uri

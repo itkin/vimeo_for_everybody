@@ -1,0 +1,9 @@
+{
+  "ticket" : {
+    "max_file_size" : "524288000", 
+    "id" : "b5eaa62457e11d01b1298010d86b8121", 
+    "endpoint" : "http://184.72.149.44/upload_multi?ticket_id=b5eaa62457e11d01b1298010d86b8121"
+  }, 
+  "stat" : "ok", 
+  "generated_in" : "0.0289"
+}
