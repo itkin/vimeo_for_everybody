@@ -1,8 +1,4 @@
 require 'rubygems'
-
-
-
-
 ENV['RAILS_ENV'] = 'test'
 
 require 'ruby-debug'
@@ -16,6 +12,8 @@ end
 require 'test/unit'
 require 'active_support'
 require 'fakeweb'
+
+FakeWeb.allow_net_connect = false
 
 
 ENV['RAILS_ROOT'] ||= File.dirname(__FILE__) + '/../../../..'

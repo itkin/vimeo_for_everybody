@@ -11,9 +11,8 @@ ActiveRecord::Schema.define(:version => 0) do
   create_table :movies, :force => true do |t|
     t.string :name
     t.integer :owner_id
+    t.boolean :vimeo_is_processing
+    t.string :vimeo_id
   end
   add_column :movies, :vimeo_info_local, :blob
-  add_column :movies, :vimeo_id, :string
-
-
 end

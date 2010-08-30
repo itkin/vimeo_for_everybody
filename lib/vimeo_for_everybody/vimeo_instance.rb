@@ -1,5 +1,6 @@
 module VimeoForEverybody
 
+  class Exception < StandardError; end
 
   module VimeoInstance
     #
@@ -13,19 +14,48 @@ module VimeoForEverybody
 
       serialize :vimeo_info_local
 
+      attr_accessor :title, :description
+      [:title, :description].each do |attr|
+        define_method attr do
+          vimeo_info[attr]
+        end
+      end
+      
       include InstanceMethods
 
     end
 
     module InstanceMethods
 
-      def upload(file_path)
-        upload_api = send(self.class.vimeo[:account]).vimeo(:upload)
-        ticket = upload_api.get_ticket
-        upload_api.upload(file_path,ticket.id,ticket.endpoint)
+      def vimeo_api(api_name)
+        unless send(self.class.vimeo[:account]).blank?
+          send(self.class.vimeo[:account]).vimeo(api_name)
+        else
+          raise Exception, "advanced API impossible to reach because lack of vimeo account instance"
+        end  
       end
+      
+      def upload(file_path)
+        upload_api = vimeo_api(:upload)
 
+        #check quota
+        quota = upload_api.get_quota
+        if quota["upload_space"]["free"].to_i < File.size(file_path)
+          raise "No more space available (#{quota["upload_space"]["free"]} B remains, whereas file size is #{File.size(file_path)} B )"
+        end
 
+        #get an upload ticket
+        ticket = upload_api.get_ticket["ticket"]
+
+        #upload the file
+        upload_api.upload(ticket["endpoint"], file_path, ticket["id"])
+
+        # complete the upload
+        rsp = upload_api.complete(ticket["id"], File.basename(file_path))
+
+        #store the video_id locally
+        update_attribute(:video_id, rsp["ticket"]["video_id"])
+      end
 
       #url :     The Vimeo URL for a video.
       #width :   (optional) The exact width of the video. Defaults to original size.
@@ -80,10 +110,13 @@ module VimeoForEverybody
         (vimeo_info_local.nil? or remote.to_s == 'remote') ? Vimeo::Simple::Video.info(vimeo_id).parsed_response.first : vimeo_info_local
       end
 
-      def set_vimeo_info
+      def set_vimeo_info(attributes={})
+        unless attributes.blank?
+          vimeo_api(:video).set_title(attributes[:title],vimeo_id) if attributes[:title]
+          vimeo_api(:video).set_description(attributes[:description],vimeo_id) if attributes[:description]
+        end
         self.vimeo_info_local = vimeo_info(:remote)
       end
-
     end
   end
 
