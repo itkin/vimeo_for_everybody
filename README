@@ -4,7 +4,8 @@
 
 I'm developping this plugin in order to handle Vimeo API easily from AR models, in a RoR 3 project.
 
-All you need is to have installed the vimeo gem and its dependencies
+All you need is to have installed the vimeo API gem and its dependencies
+
 
 == USAGE ==
 
@@ -31,7 +32,7 @@ class User
 end
 
 class Video
-  host_on_vimeo
+  host_on_vimeo, :account => :user
 end
 
 3- Access the vimeo API as follow

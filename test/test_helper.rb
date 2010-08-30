@@ -72,5 +72,3 @@ end
 def unregister_uri
   FakeWeb.clean_registry
 end
-
-

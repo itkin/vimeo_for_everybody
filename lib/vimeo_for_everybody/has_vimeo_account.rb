@@ -90,7 +90,7 @@ module VimeoForEverybody
         rescue Vimeo::Advanced::RequestFailed => e
           self.errors.add(:vimeo, e.message)
           false
-        rescue Exception
+        rescue 
           false
         end
       end
