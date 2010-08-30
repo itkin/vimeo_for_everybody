@@ -61,7 +61,7 @@ module VimeoForEverybody
           proxy_owner.send("#{proxy_reflection.name.to_s.singularize}_ids", true, :remote).collect do |vimeo_id|
             vimeo_instance = find_or_initialize_by_vimeo_id(vimeo_id)
             vimeo_instance.set_vimeo_info
-            vimeo_instance.save
+            vimeo_instance.save(false)
             vimeo_instance
           end
         end
