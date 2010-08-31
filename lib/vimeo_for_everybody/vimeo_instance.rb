@@ -44,7 +44,6 @@ module VimeoForEverybody
         end
       end
 
-
       def vimeo_api(api_name)
         unless send(self.class.vimeo[:account]).blank?
           send(self.class.vimeo[:account]).vimeo(api_name)
