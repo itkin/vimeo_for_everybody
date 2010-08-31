@@ -26,7 +26,8 @@ class HasVimeoAccountTest < ActiveSupport::TestCase
 
     assert @owner.movies.synchronize!
     assert_equal 1, @owner.movies.size
-    assert_equal 'test', @owner.movies.first.vimeo_info['title'] 
+    assert_equal 'test', @owner.movies.first.vimeo_info['title']
+    assert_equal 'test', @owner.movies.first.title
   end
 
   def test_local_collection

@@ -28,31 +28,20 @@ module VimeoForEverybody
     module InstanceMethods
 
       def synchronize(target = :remote)
-
         if not vimeo_is_synch and vimeo_id
-
           self.vimeo_is_synch = true
-
           if target.to_s == 'remote'
-
             vimeo[:shared_attributes].each do |attr|
               vimeo_api(:video).send("set_#{attr}", send(attr),vimeo_id) if changed.include?(attr.to_s)
             end
-
             self.vimeo_info_local = vimeo_info(:remote)
-
           elsif target.to_s == 'local'
-
             self.vimeo_info_local = vimeo_info(:remote)
-
             vimeo[:shared_attributes].each do |attr|
-              self.send("#{attr}=", vimeo_info[attr])
+              self.send("#{attr}=", vimeo_info[attr.to_s])
             end
-
           end
-
         end
-
       end
 
 
