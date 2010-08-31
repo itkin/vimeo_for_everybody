@@ -12,6 +12,8 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string :name
     t.integer :owner_id
     t.string :vimeo_id
+    t.string :title
+    t.text :description
   end
   add_column :movies, :vimeo_info_local, :blob
 end

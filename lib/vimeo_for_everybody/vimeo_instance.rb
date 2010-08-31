@@ -3,6 +3,7 @@ module VimeoForEverybody
   class Exception < StandardError; end
 
   module VimeoInstance
+
     #
     # options = { :account => :user, :players => { :large => {:width=> 200, :height => 100, ...}} 
     def hosted_on_vimeo(options={})
@@ -11,21 +12,49 @@ module VimeoForEverybody
       self.vimeo = {}
       self.vimeo[:account] = options[:account] or raise "need an AR model which hold the Viemo account"
       self.vimeo[:players] = {:default =>{}}.update(options[:players] || {})
+      self.vimeo[:shared_attributes] = options[:shared_attributes] || [:title, :description]
 
       serialize :vimeo_info_local
-
-      attr_accessor :title, :description
-      [:title, :description].each do |attr|
-        define_method attr do
-          vimeo_info[attr]
-        end
-      end
+      attr_accessor_with_default :vimeo_is_synch, false
       
-      include InstanceMethods
+      before_save { |instance|
+        instance.synchronize
+      }
 
+      include InstanceMethods
+      
     end
 
     module InstanceMethods
+
+      def synchronize(target = :remote)
+
+        if not vimeo_is_synch and vimeo_id
+
+          self.vimeo_is_synch = true
+
+          if target.to_s == 'remote'
+
+            vimeo[:shared_attributes].each do |attr|
+              vimeo_api(:video).send("set_#{attr}", send(attr),vimeo_id) if changed.include?(attr.to_s)
+            end
+
+            self.vimeo_info_local = vimeo_info(:remote)
+
+          elsif target.to_s == 'local'
+
+            self.vimeo_info_local = vimeo_info(:remote)
+
+            vimeo[:shared_attributes].each do |attr|
+              self.send("#{attr}=", vimeo_info[attr])
+            end
+
+          end
+
+        end
+
+      end
+
 
       def vimeo_api(api_name)
         unless send(self.class.vimeo[:account]).blank?
@@ -109,7 +138,7 @@ module VimeoForEverybody
       #tags : Comma separated list of tags
 
       def vimeo_info(remote=nil)
-        (vimeo_info_local.nil? or remote.to_s == 'remote') ? vimeo_api(:video).get_info(vimeo_id)["video"].first : vimeo_info_local
+        (vimeo_id and remote.to_s == 'remote') ? vimeo_api(:video).get_info(vimeo_id)["video"].first : vimeo_info_local
       end
 
       #format = small, medium, large
@@ -127,13 +156,6 @@ module VimeoForEverybody
         vimeo_thumbnail(format='small')["_content"]
       end
       
-      def set_vimeo_info(attributes={})
-        unless attributes.blank?
-          vimeo_api(:video).set_title(attributes[:title],vimeo_id) if attributes[:title]
-          vimeo_api(:video).set_description(attributes[:description],vimeo_id) if attributes[:description]
-        end
-        self.vimeo_info_local = vimeo_info(:remote)
-      end
     end
   end
 
