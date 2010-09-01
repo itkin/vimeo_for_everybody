@@ -129,7 +129,7 @@ module VimeoForEverybody
       #tags : Comma separated list of tags
 
       def vimeo_info(remote=nil)
-        (vimeo_id and remote.to_s == 'remote') ? vimeo_api(:video).get_info(vimeo_id)["video"].first : vimeo_info_local
+        (vimeo_id and remote.to_s == 'remote') ? vimeo_api(:video).get_info(vimeo_id)["video"].first : vimeo_info_local || {}
       end
 
       #format = small, medium, large
