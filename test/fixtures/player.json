@@ -1,0 +1,18 @@
+{"duration": "56",
+ "html": "<iframe src=\"http://player.vimeo.com/video/14523148\" width=\"320\" height=\"240\" frameborder=\"0\"></iframe>",
+ "thumbnail_width": 200,
+ "video_id": "14523148",
+ "author_name": "Nicolas Papon",
+ "title": "test 2",
+ "provider_url": "http://vimeo.com/",
+ "provider_name": "Vimeo",
+ "thumbnail_height": 150,
+ "is_plus": "0",
+ "version": "1.0",
+ "type": "video",
+ "height": "240",
+ "thumbnail_url": "http://b.vimeocdn.com/ts/854/052/85405295_200.jpg",
+ "description": "comment test 2",
+ "author_url": "http://vimeo.com/alvarocanovas",
+ "width": "320"}
+

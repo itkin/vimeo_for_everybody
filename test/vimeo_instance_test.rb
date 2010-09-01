@@ -67,5 +67,11 @@ class VimeoInstanceTest < ActiveSupport::TestCase
     assert_equal "1234567", @movie.vimeo_id 
   end
 
+  def test_player
+    register_uri(:get, /vimeo/, 'player' )
+    html = @movie.vimeo_player(:id =>"id_test", :class => "class_test")
+    assert_match /class=\"class_test\" id=\"id_test\"/, html
+  end
+
 
 end

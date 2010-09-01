@@ -91,15 +91,17 @@ module VimeoForEverybody
       #api :     (optional) Enable the Javascript API for Moogaloop. Defaults to false.
       #wmode :   (optional) Add the "wmode" parameter. Can be either transparent or opaque.
       #iframe :  (optional) Use our new embed code. Defaults to true. New!
-
+      #id   : added to the iframe
+      #class: added to the iframe
       def vimeo_player(*args)
         options = args.extract_options!.symbolize_keys!
+        html_options = {:id => options.delete(:id)}.update(:class=> options.delete(:class)).delete_if{|k,v| v.nil?}
         player_name = args.first || :default
         options = self.class.vimeo[:players][player_name].dup.update(options)
 
         oembed = "http://vimeo.com/api/oembed.json?url=http%3A//vimeo.com/" + vimeo_id.to_s
         oembed += "?"+ options.to_param unless options.blank?
-        HTTParty.get(oembed)['html']
+        HTTParty.get(oembed)['html'].gsub('<iframe',"<iframe #{html_options.collect{|opt| "#{opt[0]}=\"#{opt[1]}\" "}}")
       end
 
 
