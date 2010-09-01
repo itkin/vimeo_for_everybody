@@ -101,6 +101,7 @@ module VimeoForEverybody
 
         oembed = "http://vimeo.com/api/oembed.json?url=http%3A//vimeo.com/" + vimeo_id.to_s
         oembed += "?"+ options.to_param unless options.blank?
+
         HTTParty.get(oembed)['html'].gsub('<iframe',"<iframe #{html_options.collect{|opt| "#{opt[0]}=\"#{opt[1]}\" "}}")
       end
 
