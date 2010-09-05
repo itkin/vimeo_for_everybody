@@ -3,7 +3,6 @@ module VimeoForEverybody
   class Exception < StandardError; end
 
   module VimeoInstance
-
     #
     # options = { :account => :user, :players => { :large => {:width=> 200, :height => 100, ...}} 
     def hosted_on_vimeo(options={})
@@ -19,6 +18,10 @@ module VimeoForEverybody
       
       before_save { |instance|
         instance.synchronize
+      }
+
+      after_destroy { |instance|
+        instance.vimeo_api(:video).delete(instance.vimeo_id)
       }
 
       include InstanceMethods
@@ -73,8 +76,9 @@ module VimeoForEverybody
         
         #store the video_id locally
         self.vimeo_id= rsp["ticket"]["video_id"]
-        synchronize(:local)
-        save
+        Kernel::sleep 2
+        self.synchronize(:local)
+        self.save
       end
 
       #url :     The Vimeo URL for a video.
