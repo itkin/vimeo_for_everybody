@@ -61,10 +61,10 @@ class VimeoInstanceTest < ActiveSupport::TestCase
   end
 
   def test_upload
-    register_uri(:post, /vimeo/, 'get_quota', 'get_ticket', 'complete' )
+    register_uri(:post, /vimeo/, 'get_quota', 'get_ticket', 'complete','video_advanced_info' )
     register_uri(:post, /upload_multi/, {:body => "0", :status => 200})
     @movie.upload(fixture_path + 'sample_iTunes.mov')
-    assert_equal "1234567", @movie.vimeo_id 
+    assert_equal "1234567", @movie.vimeo_id
   end
 
   def test_player

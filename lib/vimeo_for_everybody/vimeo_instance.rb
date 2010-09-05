@@ -18,7 +18,7 @@ module VimeoForEverybody
       attr_accessor_with_default :vimeo_is_synch, false
       
       before_save { |instance|
-        instance.synchronize
+        instance.delay.synchronize
       }
 
       include InstanceMethods
@@ -72,7 +72,9 @@ module VimeoForEverybody
         rsp = upload_api.complete(ticket["id"], File.basename(file_path))
         
         #store the video_id locally
-        update_attribute(:vimeo_id, rsp["ticket"]["video_id"])
+        self.vimeo_id= rsp["ticket"]["video_id"]
+        synchronize(:local)
+        save
       end
 
       #url :     The Vimeo URL for a video.
