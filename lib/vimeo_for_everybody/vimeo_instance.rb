@@ -91,7 +91,8 @@ module VimeoForEverybody
         
         #store the video_id locally
         self.vimeo_id= rsp["ticket"]["video_id"]
-        self.synchronize!(:local)
+        self.is_transcoding = true
+        self.synchronize!(:remote)
       end
 
       #url :     The Vimeo URL for a video.
