@@ -18,7 +18,7 @@ module VimeoForEverybody
       attr_accessor_with_default :vimeo_is_synch, false
       
       before_save { |instance|
-        instance.delay.synchronize
+        instance.synchronize
       }
 
       include InstanceMethods
