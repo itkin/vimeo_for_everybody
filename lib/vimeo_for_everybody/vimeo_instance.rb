@@ -24,7 +24,6 @@ module VimeoForEverybody
       include InstanceMethods
       
     end
-
     module InstanceMethods
 
       def synchronize(target = :remote)
@@ -57,8 +56,8 @@ module VimeoForEverybody
         upload_api = vimeo_api(:upload)
 
         #check quota
-        quota = upload_api.get_quota
-        if quota["upload_space"]["free"].to_i < File.size(file_path)
+        quota = upload_api.get_quota["user"]["upload_space"]["free"]
+        if quota.to_i < File.size(file_path)
           raise "No more space available (#{quota["upload_space"]["free"]} B remains, whereas file size is #{File.size(file_path)} B )"
         end
 
@@ -146,6 +145,8 @@ module VimeoForEverybody
       def vimeo_thumbnail_url(format='small')
         vimeo_thumbnail(format='small')["_content"]
       end
+
+
       
     end
   end
