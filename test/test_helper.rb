@@ -48,7 +48,7 @@ end
 
 require File.dirname(__FILE__) + '/../init'
 ActiveRecord::Base.establish_connection(config[db_adapter])
-#load(File.dirname(__FILE__) + "/schema.rb")
+load(File.dirname(__FILE__) + "/schema.rb")
 load(File.dirname(__FILE__) + "/model.rb")
 
 def fixture_path

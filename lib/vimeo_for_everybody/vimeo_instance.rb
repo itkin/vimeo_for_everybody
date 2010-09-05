@@ -30,8 +30,7 @@ module VimeoForEverybody
     module ClassMethods
       def synchronize_transcoded
         where(:is_transcoding => true).each do |instance|
-          instance.synchronize(:local)
-          instance.save(:validate =>false)
+          instance.synchronize!(:local)
         end
       end
     end
@@ -52,6 +51,11 @@ module VimeoForEverybody
             end
           end
         end
+      end
+
+      def synchronize!(target=:remote)
+        self.synchronize(target)
+        self.save(:validate =>false)
       end
 
       def vimeo_api(api_name)
@@ -85,8 +89,7 @@ module VimeoForEverybody
         #store the video_id locally
         self.vimeo_id= rsp["ticket"]["video_id"]
         Kernel::sleep 2
-        self.synchronize(:local)
-        self.save
+        self.synchronize!(:local)
       end
 
       #url :     The Vimeo URL for a video.
