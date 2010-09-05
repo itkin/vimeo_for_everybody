@@ -14,6 +14,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string :vimeo_id
     t.string :title
     t.text :description
+    t.boolean :is_transcoding
   end
   add_column :movies, :vimeo_info_local, :blob
 end

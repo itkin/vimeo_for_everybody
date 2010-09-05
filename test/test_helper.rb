@@ -44,7 +44,7 @@ if db_adapter.nil?
   raise "No DB Adapter selected. Pass the DB= option to pick one, or install Sqlite or Sqlite3."
 end
 
-#FakeWeb.allow_net_connect = false
+
 
 require File.dirname(__FILE__) + '/../init'
 ActiveRecord::Base.establish_connection(config[db_adapter])

@@ -61,10 +61,11 @@ class VimeoInstanceTest < ActiveSupport::TestCase
   end
 
   def test_upload
-    register_uri(:post, /vimeo/, 'get_quota', 'get_ticket', 'complete','video_advanced_info' )
+    register_uri(:post, /vimeo/, 'get_quota', 'get_ticket', 'complete','video_advanced_info_transcoding' )
     register_uri(:post, /upload_multi/, {:body => "0", :status => 200})
     @movie.upload(fixture_path + 'sample_iTunes.mov')
     assert_equal "1234567", @movie.vimeo_id
+    assert_equal true, @movie.is_transcoding
   end
 
   def test_player
@@ -73,5 +74,13 @@ class VimeoInstanceTest < ActiveSupport::TestCase
     assert_match /class=\"class_test\" id=\"id_test\"/, html
   end
 
+  def test_synchronize_transcoded
+    @movie.vimeo_is_synch = true
+    @movie.is_transcoding = true
+    @movie.save
+    register_uri :post, /vimeo/, 'video_advanced_info'
+    assert_equal 1, Movie.synchronize_transcoded.size
+    assert_equal false, @movie.reload.is_transcoding
+  end
 
 end

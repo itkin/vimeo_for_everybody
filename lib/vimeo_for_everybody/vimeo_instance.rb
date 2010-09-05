@@ -11,7 +11,7 @@ module VimeoForEverybody
       self.vimeo = {}
       self.vimeo[:account] = options[:account] or raise "need an AR model which hold the Viemo account"
       self.vimeo[:players] = {:default =>{}}.update(options[:players] || {})
-      self.vimeo[:shared_attributes] = options[:shared_attributes] || [:title, :description]
+      self.vimeo[:shared_attributes] = options[:shared_attributes] || [:title, :description, :is_transcoding]
 
       serialize :vimeo_info_local
       attr_accessor_with_default :vimeo_is_synch, false
@@ -21,11 +21,19 @@ module VimeoForEverybody
       }
 
       after_destroy { |instance|
-        instance.vimeo_api(:video).delete(instance.vimeo_id)
+        instance.vimeo_api(:video).delete(instance.vimeo_id) if instance.vimeo_id
       }
 
       include InstanceMethods
-      
+      extend ClassMethods
+    end
+    module ClassMethods
+      def synchronize_transcoded
+        where(:is_transcoding => true).each do |instance|
+          instance.synchronize(:local)
+          instance.save(:validate =>false)
+        end
+      end
     end
     module InstanceMethods
 

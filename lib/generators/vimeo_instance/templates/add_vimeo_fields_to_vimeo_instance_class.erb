@@ -2,8 +2,9 @@ class AddVimeoFieldsTo<%=class_name.pluralize%> < ActiveRecord::Migration
   def self.up     
     add_column :<%=plural_name%>, :vimeo_info_local, :blob
     add_column :<%=plural_name%>, :vimeo_id, :string
-    add_column :<%=plural_name%>, :vimeo_title, :string
-    add_column :<%=plural_name%>, :vimeo_description, :text
+    add_column :<%=plural_name%>, :title, :string
+    add_column :<%=plural_name%>, :description, :text
+    add_column :<%=plural_name%>, :is_transcoding, :boolean
   end    
   def self.down     
     remove_column :<%=plural_name%>, :vimeo_info_local
