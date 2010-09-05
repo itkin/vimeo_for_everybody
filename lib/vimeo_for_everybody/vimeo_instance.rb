@@ -17,7 +17,7 @@ module VimeoForEverybody
       attr_accessor_with_default :vimeo_is_synch, false
       
       before_save { |instance|
-        instance.synchronize
+        instance.synchronize(:remote) unless instance.vimeo_is_synch
       }
 
       after_destroy { |instance|
@@ -35,13 +35,16 @@ module VimeoForEverybody
       end
     end
     module InstanceMethods
-
-      def synchronize(target = :remote)
-        if not vimeo_is_synch and vimeo_id
+      #todo refactor
+      # targets = :remote, :local
+      def synchronize(target=:remote)
+        if  vimeo_id
           self.vimeo_is_synch = true
           if target.to_s == 'remote'
             vimeo[:shared_attributes].each do |attr|
-              vimeo_api(:video).send("set_#{attr}", send(attr),vimeo_id) if changed.include?(attr.to_s) and attr.to_s != 'is_transcoding'
+              if changed.include?(attr.to_s) and not attr.to_s == 'is_transcoding'
+                vimeo_api(:video).send("set_#{attr}", send(attr),vimeo_id)
+              end
             end
             self.vimeo_info_local = vimeo_info(:remote)
           elsif target.to_s == 'local'
@@ -51,11 +54,11 @@ module VimeoForEverybody
             end
           end
         end
+        self
       end
 
       def synchronize!(target=:remote)
-        self.synchronize(target)
-        self.save(:validate =>false)
+        self.synchronize(target).save(:validate =>false)
       end
 
       def vimeo_api(api_name)
@@ -88,7 +91,6 @@ module VimeoForEverybody
         
         #store the video_id locally
         self.vimeo_id= rsp["ticket"]["video_id"]
-        Kernel::sleep 2
         self.synchronize!(:local)
       end
 
