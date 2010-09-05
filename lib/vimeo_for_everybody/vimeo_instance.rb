@@ -41,7 +41,7 @@ module VimeoForEverybody
           self.vimeo_is_synch = true
           if target.to_s == 'remote'
             vimeo[:shared_attributes].each do |attr|
-              vimeo_api(:video).send("set_#{attr}", send(attr),vimeo_id) if changed.include?(attr.to_s)
+              vimeo_api(:video).send("set_#{attr}", send(attr),vimeo_id) if changed.include?(attr.to_s) and attr.to_s != 'is_transcoding'
             end
             self.vimeo_info_local = vimeo_info(:remote)
           elsif target.to_s == 'local'
