@@ -124,6 +124,10 @@ module VimeoForEverybody
         HTTParty.get(oembed)['html'].gsub('<iframe',"<iframe #{html_options.collect{|opt| "#{opt[0]}=\"#{opt[1]}\" "}}")
       end
 
+      def vimeo_player_url
+        "http://player.vimeo.com/video/#{vimeo_id}"
+      end
+
 
 
       #title : Video title
